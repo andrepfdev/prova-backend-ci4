@@ -27,3 +27,10 @@ $routes->get('/pedidos/(:num)', 'PedidoController::show/$1');
 $routes->post('/pedidos', 'PedidoController::create');
 $routes->put('/pedidos/(:num)', 'PedidoController::update/$1');
 $routes->delete('/pedidos/(:num)', 'PedidoController::delete/$1');
+
+// Rotas para CRUD de Itens de Pedido
+$routes->get('/itens-pedido', 'ItemPedidoController::index');
+$routes->get('/itens-pedido/(:num)', 'ItemPedidoController::show/$1');
+$routes->post('/itens-pedido', 'ItemPedidoController::create');
+$routes->put('/itens-pedido/(:num)', 'ItemPedidoController::update/$1');
+$routes->delete('/itens-pedido/(:num)', 'ItemPedidoController::delete/$1');
