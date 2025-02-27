@@ -2,17 +2,16 @@
 
 namespace App\Controllers;
 
-use App\Models\ProdutoModel;
+use App\Models\ItemPedidoModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
 
-class ProdutoController extends ResourceController
+class ItemPedidoController extends ResourceController
 {
     public function __construct()
     {
-        $this->model = new ProdutoModel();
+        $this->model = new ItemPedidoModel();
     }
-
     /**
      * Return an array of resource objects, themselves in array format.
      *
@@ -22,20 +21,19 @@ class ProdutoController extends ResourceController
     {
         $filters = $this->request->getGet();
 
-        // Apanhei para chegar nesse código, mas acho que ficou bom
         if (!empty($filters)) {
             unset($filters['page'], $filters['per_page']);
             $this->model->like(array_filter($filters));
         }
 
-        $produtos = $this->model->paginate(3);
+        $itensPedido = $this->model->paginate(5);
         $pager = $this->model->pager;
 
-        if (empty($produtos)) {
+        if (empty($itensPedido)) {
             $response = [
                 'cabecalho' => [
                     'status' => 404,
-                    'mensagem' => 'Nenhum produto encontrado.'
+                    'mensagem' => 'Nenhum item de pedido encontrado.'
                 ],
                 'retorno' => null
             ];
@@ -47,7 +45,7 @@ class ProdutoController extends ResourceController
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $produtos,
+            'retorno' => $itensPedido,
             'paginate' => [
                 'currentPage' => $pager->getCurrentPage() ?: 1,
                 'pageCount' => $pager->getPageCount() ?: 1,
@@ -68,13 +66,13 @@ class ProdutoController extends ResourceController
      */
     public function show($id = null)
     {
-        $produto = $this->model->find($id);
+        $itemPedido = $this->model->find($id);
 
-        if ($produto === null) {
+        if ($itemPedido === null) {
             $response = [
                 'cabecalho' => [
                     'status' => 404,
-                    'mensagem' => 'Produto não encontrado.'
+                    'mensagem' => 'Item de pedido não encontrado.'
                 ],
                 'retorno' => null
             ];
@@ -86,7 +84,7 @@ class ProdutoController extends ResourceController
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $produto
+            'retorno' => $itemPedido,
         ];
 
         return $this->respond($response);
@@ -102,16 +100,16 @@ class ProdutoController extends ResourceController
         $json = $this->request->getJSON(true);
 
         if (!isset($json['parametros'])) {
-            return $this->fail('Nenhum dado foi informado.', 400);
+            return $this->failValidationErrors('Parâmetros não informados.', 400);
         }
 
         $data = $json['parametros'];
 
-        if (!$this->model->insert($data)) {
-            return $this->failValidationErrors($this->model->errors());
+        if ($this->model->insert($data) === false) {
+            return $this->failValidationErrors($this->model->errors(), 400);
         }
 
-        return $this->respondCreated($data);
+        return $this->respondCreated(['cabecalho' => ['status' => 201, 'mensagem' => 'Dados retornados com sucesso.', 'retorno' => $data]]);
     }
 
     /**
@@ -125,17 +123,17 @@ class ProdutoController extends ResourceController
     {
         $json = $this->request->getJSON(true);
 
-        if (!isset($json['parametros']) || empty($json['parametros'])) {
-            return $this->failValidationErrors('Parâmetros não fornecidos.', 400);
+        if (!isset($json['parametros'])) {
+            return $this->failValidationErrors('Parâmetros não informados.', 400);
         }
 
         $data = $json['parametros'];
 
         if ($this->model->update($id, $data) === false) {
-            return $this->failValidationErrors($this->model->errors());
+            return $this->failValidationErrors($this->model->errors(), 400);
         }
 
-        return $this->respondUpdated($data);
+        return $this->respond(['cabecalho' => ['status' => 200, 'mensagem' => 'Item de pedido atualizado com sucesso.', 'retorno' => $data]]);
     }
 
     /**
@@ -147,20 +145,27 @@ class ProdutoController extends ResourceController
      */
     public function delete($id = null)
     {
-        $produto = $this->model->find($id);
+        $itemPedido = $this->model->find($id);
 
-        if ($produto === null) {
-            return $this->fail('Produto não encontrado.', 404);
+        if ($itemPedido === null) {
+            $response = [
+                'cabecalho' => [
+                    'status' => 404,
+                    'mensagem' => 'Item de pedido não encontrado.'
+                ],
+                'retorno' => null
+            ];
+            return $this->respond($response, 404);
         }
 
-        $this->model->delete($produto);
+        $this->model->delete($id);
 
         $response = [
             'cabecalho' => [
                 'status' => 200,
-                'mensagem' => 'Produto excluído com sucesso.'
+                'mensagem' => 'Item de pedido excluído com sucesso.'
             ],
-            'retorno' => $produto
+            'retorno' => $itemPedido
         ];
 
         return $this->respondDeleted($response);

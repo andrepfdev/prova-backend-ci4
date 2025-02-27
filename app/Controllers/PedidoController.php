@@ -20,7 +20,15 @@ class PedidoController extends ResourceController
      */
     public function index()
     {
-        $pedidos = $this->model->findAll();
+        $filters = $this->request->getGet();
+
+        if (!empty($filters)) {
+            unset($filters['page'], $filters['per_page']);
+            $this->model->like(array_filter($filters));
+        }
+
+        $pedidos = $this->model->paginate(3);
+        $pager = $this->model->pager;
 
         if (empty($pedidos)) {
             $response = [
@@ -38,7 +46,13 @@ class PedidoController extends ResourceController
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $pedidos
+            'retorno' => $pedidos,
+            'paginate' => [
+                'currentPage' => $pager->getCurrentPage() ?: 1,
+                'pageCount' => $pager->getPageCount() ?: 1,
+                'perPage' => $pager->getPerPage() ?: 1,
+                'total' => $pager->getTotal() ?: 0
+            ]
         ];
 
         return $this->respond($response);
