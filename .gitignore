@@ -1,0 +1,45 @@
+# Arquivos e diretórios do sistema
+/vendor
+/node_modules
+/.env
+/.vscode
+/.idea
+
+# Diretórios de cache e logs
+/writable/cache/*
+/writable/logs/*
+/writable/debugbar/*
+/writable/sessions/*
+/writable/uploads/*
+
+# Arquivos de configuração específicos do ambiente
+.env
+.phpunit.result.cache
+
+# Arquivos de migração e seeds
+/database/migrations/*
+/database/seeds/*
+
+# Arquivos de IDEs
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de compilação
+/build
+/dist
+
+# Arquivos de cobertura de testes
+/coverage
+.phpunit.result.cache
+
+# Arquivos de log
+*.log
+
+# Arquivos temporários
+/tmp
