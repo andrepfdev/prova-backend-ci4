@@ -33,7 +33,7 @@ RUN echo '<VirtualHost *:80>\n\
 
 # Configurar permissões (atualizado)
 RUN chown -R www-data:www-data /var/www/html \
-    && find /var/www/html/writable -type d -exec chmod 777 {} \; \
+    && find /var/www/html/writable -type d -exec chmod 775 {} \; \
     && find /var/www/html/writable -type f -exec chmod 664 {} \;
 
 # Adicionar script de inicialização
