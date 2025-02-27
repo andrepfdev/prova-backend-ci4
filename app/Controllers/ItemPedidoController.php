@@ -19,8 +19,15 @@ class ItemPedidoController extends ResourceController
      */
     public function index()
     {
+        $filters = $this->request->getGet();
 
-        $itensPedido = $this->model->findAll();
+        if (!empty($filters)) {
+            unset($filters['page'], $filters['per_page']);
+            $this->model->like(array_filter($filters));
+        }
+
+        $itensPedido = $this->model->paginate(5);
+        $pager = $this->model->pager;
 
         if (empty($itensPedido)) {
             $response = [
@@ -38,7 +45,13 @@ class ItemPedidoController extends ResourceController
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $itensPedido
+            'retorno' => $itensPedido,
+            'paginate' => [
+                'currentPage' => $pager->getCurrentPage() ?: 1,
+                'pageCount' => $pager->getPageCount() ?: 1,
+                'perPage' => $pager->getPerPage() ?: 1,
+                'total' => $pager->getTotal() ?: 0
+            ]
         ];
 
         return $this->respond($response);
@@ -71,7 +84,7 @@ class ItemPedidoController extends ResourceController
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $itemPedido
+            'retorno' => $itemPedido,
         ];
 
         return $this->respond($response);

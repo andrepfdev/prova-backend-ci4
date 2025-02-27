@@ -20,7 +20,15 @@ class ClienteController extends ResourceController
      */
     public function index()
     {
-        $clientes = $this->model->findAll();
+        $filters = $this->request->getGet();
+
+        if (!empty($filters)) {
+            unset($filters['page'], $filters['per_page']);
+            $this->model->like(array_filter($filters));
+        }
+
+        $clientes = $this->model->paginate(5);
+        $pager = $this->model->pager;
 
         if (empty($clientes)) {
             $response = [
@@ -38,7 +46,13 @@ class ClienteController extends ResourceController
                 'status' => 200,
                 'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $clientes
+            'retorno' => $clientes,
+            'paginate' => [
+                'currentPage' => $pager->getCurrentPage() ?: 1,
+                'pageCount' => $pager->getPageCount() ?: 1,
+                'perPage' => $pager->getPerPage() ?: 1,
+                'total' => $pager->getTotal() ?: 0
+            ]
         ];
 
         return $this->respond($response);

@@ -20,7 +20,16 @@ class ProdutoController extends ResourceController
      */
     public function index()
     {
-        $produtos = $this->model->findAll();
+        $filters = $this->request->getGet();
+
+        // Apanhei para chegar nesse código, mas acho que ficou bom
+        if (!empty($filters)) {
+            unset($filters['page'], $filters['per_page']);
+            $this->model->like(array_filter($filters));
+        }
+
+        $produtos = $this->model->paginate(3);
+        $pager = $this->model->pager;
 
         if (empty($produtos)) {
             $response = [
@@ -36,9 +45,15 @@ class ProdutoController extends ResourceController
         $response = [
             'cabecalho' => [
                 'status' => 200,
-                'menstosm' => 'Dados retornados com sucesso'
+                'mensagem' => 'Dados retornados com sucesso'
             ],
-            'retorno' => $produtos
+            'retorno' => $produtos,
+            'paginate' => [
+                'currentPage' => $pager->getCurrentPage() ?: 1,
+                'pageCount' => $pager->getPageCount() ?: 1,
+                'perPage' => $pager->getPerPage() ?: 1,
+                'total' => $pager->getTotal() ?: 0
+            ]
         ];
 
         return $this->respond($response);
