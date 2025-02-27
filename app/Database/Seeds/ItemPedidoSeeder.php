@@ -4,7 +4,7 @@ namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
 
-class ItemPedidoSeerder extends Seeder
+class ItemPedidoSeeder extends Seeder
 {
     public function run()
     {
