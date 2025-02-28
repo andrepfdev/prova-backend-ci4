@@ -34,7 +34,7 @@ Esta API foi desenvolvida como parte de um desafio técnico para a posição de 
 1. **Clone o repositório**
    ```bash
    git clone https://github.com/andrepfdev/prova-backend-ci4.git
-   cd api-pedidos-ci4
+   cd prova-backend-ci4
    ```
 ### Método A:
 
