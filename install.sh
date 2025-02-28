@@ -41,18 +41,18 @@ sleep 30
 
 # Instalar dependências com Composer
 echo "📦 Instalando dependências..."
-docker compose exec -T app composer install
+docker compose exec app bash composer install
 
 # Executar migrations
 echo "🔄 Executando migrations..."
-docker compose exec -T app php spark migrate --force
+docker compose exec app bash php spark migrate --force
 
 # Executar seeders
 echo "🌱 Executando seeders..."
-docker compose exec -T app php spark db:seed ProdutoSeeder
-docker compose exec -T app php spark db:seed ClienteSeeder
-docker compose exec -T app php spark db:seed PedidoSeeder
-docker compose exec -T app php spark db:seed ItemPedidoSeeder
+docker compose exec app bash php spark db:seed ProdutoSeeder
+docker compose exec app bash php spark db:seed ClienteSeeder
+docker compose exec app bash php spark db:seed PedidoSeeder
+docker compose exec app bash php spark db:seed ItemPedidoSeeder
 
 echo "✅ Instalação concluída!"
 echo "🌐 A API está disponível em: http://localhost:8080"
